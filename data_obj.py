@@ -8,7 +8,6 @@ class InterfaceInfo:
     interface: str
     name: str = ""          # naming VLAN optional but important
     vlans: list[str]
-    access__mode: str       # trunk/access
     ip: tuple(str)          # (ip, subnet)
     mac: str 
     shut: bool              # true if shutdown. false if no shut.
@@ -22,8 +21,9 @@ class RouterInfo:
     name: str
     type: str                              # ABR/CORE/ETC 
     interface_info: list[InterfaceInfo]
-    gateway: str 
+    gateway: str = ""
     desc: str = ""
+    loopback: str = ""
     
 # Info useful especially for troubleshooting by comparison
 # Vlans from the InterfaceInfo class should also be checked
@@ -35,6 +35,7 @@ class InterfaceTrouble:
     trunk_mode: str       # desirable/etc
     duplex: str
     speed: str 
+    access_mode: str      # trunk/access
     
 @dataclass
 class VlanInfo:
