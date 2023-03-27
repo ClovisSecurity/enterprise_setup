@@ -1,0 +1,88 @@
+from dataclasses import dataclass
+
+# CLASSES USEFUL FOR ALL SECTIONS OF PROGRAM
+    
+@dataclass
+class InterfaceInfo:
+    interface: str
+    name: str
+    vlans: list[str]
+    access__mode: str   # trunk/access
+    ip: tuple(str)      # (ip, subnet)
+    mac: str 
+    shut: bool          # true if shutdown. false if no shut.
+    outside_bool: bool  # used to determine if interface is outside or inside
+    link_type: str      # point-2-point/etc 
+    
+@dataclass
+class RouterInfo:
+    type: str                              # ABR/CORE/ETC 
+    interface_info: list[InterfaceInfo]
+    gateway: str 
+    desc: str
+    
+# Info useful especially for troubleshooting by comparison
+# Vlans from tthe InterfaceInfo class should also be checked
+@dataclass
+class InterfaceTrouble:
+    interface: InterfaceInfo
+    trunk_status: str     # trunking
+    trunk_mode: str       # desirable/etc
+    duplex: str
+    speed: str 
+    
+@dataclass
+class VlanInfo:
+    id: int
+    name: str
+    interface: str
+    mac: str 
+    ip: tuple(str) # (ip, subnet)
+    
+
+# CLASSES FOR STORING OSPF DATA
+# Should there be storage for info related to route summarization?
+
+@dataclass
+class OspfInfo:
+    id: str
+    proc: int = 1
+    area: list[int]
+    ip: tuple(str)             #(ip, subnet)
+    interfaces: list[str]      # [eth1, eth0]
+    type: str                  # ABR/ASBR/etc
+    
+@dataclass
+class OspfNei:
+    id: str
+    neighbors: list[str]
+    role: str # DR/BDR/etc
+    
+# timers must be the same on neighboring routers
+@dataclass
+class OspfTrouble:
+    id: str
+    hello: int
+    dead: int
+    ad: int
+    priority: int
+    auth_info: str
+
+@dataclass
+class AccessList:
+    name: str
+    num: int
+    interface: str
+    permit_ip: tuple(str) # (permitted_ip, permitted_subnet)
+    deny_ip: tuple(str)   # (deny_ip, deny_subnet)
+    
+@dataclass
+class NatInfo:
+    outside_int: list[str] # list of outside interfaces
+    inside_int: list[str]  # list of inside interfaces
+    type: str = "PAT"      # PAT/STATIC/ETC
+    acl: str               # which ACL is being used on the inside
+    mapping: tuple(str)    # (inside_ip, outside_ip)
+    pool: str              # name of NAT Pool
+    
+    
