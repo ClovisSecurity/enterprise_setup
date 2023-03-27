@@ -44,7 +44,7 @@ class InterfaceTrouble:
 @dataclass
 class VlanInfo:
     """Class for storing VLAN Info"""
-    id: int
+    id: int = field(default_factory=int)
     name: str = field(default="NotDefined")
     interface: str = field(default_factory=str)
     mac: str = field(default_factory=str)
@@ -68,7 +68,7 @@ class OspfInfo:
 class OspfNei:
     """Class for storing OSPF neighbor info"""
     id: str = field(default_factory=str)
-    neighbors: list[str] = field(default_factory=list)
+    neighbors: list = field(default_factory=list)
     role: str = field(default_factory=str)                           # DR/BDR/etc
     
 # timers must be the same on neighboring routers
@@ -94,10 +94,10 @@ class AccessList:
 @dataclass
 class NatInfo:
     """Class for storing NAT-related info"""
-    outside_int: list[str] = field(default_factory=list)            # list of outside interfaces
-    inside_int: list[str] = field(default_factory=list)             # list of inside interfaces
+    outside_int: list = field(default_factory=list)            # list of outside interfaces
+    inside_int: list = field(default_factory=list)             # list of inside interfaces
     type: str = field(default="PAT")                                # PAT/STATIC/ETC
-    acl: str =field(default_factory=str)                            # which ACL is being used on the inside
+    acl: str = field(default_factory=str)                            # which ACL is being used on the inside
     pool: str  = field(default_factory=str)                         # name of NAT Pool
     
     
