@@ -10,20 +10,25 @@ from pprint import pprint
 import xmltodict
 from script35 import payload
 
-with manager.connect(host=router["host"], port=router["port"], username=router["username"], password=router["password"], hostkey_verify=False, device_params={'name': 'csr'}) as m:
+"""
+Program uses NETCONF to pull XML data from router
+"""
+
+with manager.connect(host=router["host"], port=router["port"], username=router["username"], password=router["password"], 
+                     hostkey_verify=False, device_params={'name': 'csr'}) as conn:
     for rpc in payload:
         try:
-          response = m.dispatch(et.fromstring(rpc))
+          response = conn.dispatch(et.fromstring(rpc))
           # print(response)
           data = response.xml
           
           query_response = xmltodict.parse(data)["rpc-reply"]["data"]["interfaces"]["interface"]
           pprint(query_response)
           
-        except RPCError as e:
-          data = e.xml
+        except RPCError as exception:
+          data = exception.xml
           pass
-        except Exception as e:
+        except Exception as exception:
           traceback.print_exc()
           exit(1)
         
@@ -48,9 +53,11 @@ with manager.connect(host=router["host"], port=router["port"], username=router["
             print(int_info.ip[0], int_info.ip[1], output_acl)
             
             trunk_status = interface['ether-state']['negotiated-duplex-mode']
-            int_trouble_data = InterfaceTrouble(name = interface['name'], trunk_status=trunk_status, speed=interface['speed'], mtu=interface['mtu'], last_change=interface['last-change'])
+            int_trouble_data = InterfaceTrouble(name = interface['name'], trunk_status=trunk_status, speed=interface['speed'], 
+                                                mtu=interface['mtu'], last_change=interface['last-change'])
             
-            print(f"Name: {int_trouble_data.name}\nShutdown: {shutdown_bool}\nTrunk Status: {int_trouble_data.trunk_status}\nSpeed: {int_trouble_data.speed}\nMTU: {int_trouble_data.mtu}\nLast Change: {int_trouble_data.last_change}")
+            print(f"Name: {int_trouble_data.name}\nShutdown: {shutdown_bool}\nTrunk Status: {int_trouble_data.trunk_status}\nSpeed: \
+                  {int_trouble_data.speed}\nMTU: {int_trouble_data.mtu}\nLast Change: {int_trouble_data.last_change}")
         
         exit()
-    m.close_session()
+    conn.close_session()
