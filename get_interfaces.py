@@ -44,6 +44,11 @@ with manager.connect(host=router["host"], port=router["port"], username=router["
             int_info = InterfaceInfo(name = name, desc = desc, vlans=[""], ip=(ip, subnet), mac = mac, shut=shutdown_bool)
             print(int_info.name, int_info.desc, int_info.mac, shutdown_bool)
             print(int_info.ip[0], int_info.ip[1], output_acl)
+            
+            trunk_status = interface['ether-state']['negotiated-duplex-mode']
+            int_trouble_data = InterfaceTrouble(name = interface['name'], trunk_status=trunk_status, speed=interface['speed'], mtu=interface['mtu'], last_change=interface['last-change'])
+            
+            print(f"Name: {int_trouble_data.name}\nTrunk Status: {int_trouble_data.trunk_status}\nSpeed: {int_trouble_data.speed}\nMTU: {int_trouble_data.mtu}\nLast Change: {int_trouble_data.last_change}")
         
         exit()
     m.close_session()
