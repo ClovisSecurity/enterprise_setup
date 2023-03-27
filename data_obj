@@ -82,7 +82,5 @@ class NatInfo:
     inside_int: list[str]  # list of inside interfaces
     type: str = "PAT"      # PAT/STATIC/ETC
     acl: str               # which ACL is being used on the inside
-    mapping: tuple(str)    # (inside_ip, outside_ip)
     pool: str              # name of NAT Pool
-    
     
