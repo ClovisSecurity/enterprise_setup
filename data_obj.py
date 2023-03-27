@@ -1,5 +1,9 @@
 from dataclasses import dataclass, field
 
+"""
+These classes will be used to organize data for my program.
+"""
+        
 # CLASSES USEFUL FOR ALL SECTIONS OF PROGRAM
     
 @dataclass
