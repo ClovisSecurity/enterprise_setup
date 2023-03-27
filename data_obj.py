@@ -30,7 +30,7 @@ class RouterInfo:
 @dataclass
 class InterfaceTrouble:
     """Class with info useful for troubleshooting trunks"""
-    interface: InterfaceInfo
+    name: str = field(default_factory=str)
     trunk_status: str     # trunking
     trunk_mode: str       # desirable/etc
     duplex: str
