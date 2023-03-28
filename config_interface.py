@@ -1,7 +1,5 @@
 import traceback
 import lxml.etree as et
-import xmltodict
-from argparse import ArgumentParser
 from ncclient import manager
 from ncclient.operations import RPCError
 from router_info import router
