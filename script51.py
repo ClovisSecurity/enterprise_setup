@@ -1,0 +1,106 @@
+#! /usr/bin/env python
+import traceback
+import lxml.etree as et
+from argparse import ArgumentParser
+from ncclient import manager
+from ncclient.operations import RPCError
+
+payload = [
+'''
+<edit-config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <target>
+    <running/>
+  </target>
+  <config>
+    <interfaces xmlns="http://openconfig.net/yang/interfaces">
+      <interface>
+        <name>GigabitEthernet2</name>
+        <config>
+          <name>GigabitEthernet2</name>
+          <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ethernetCsmacd</type>
+          <description>Frustrated Person's Interface</description>
+          <enabled>true</enabled>
+        </config>
+        <subinterfaces>
+          <subinterface>
+            <index>0</index>
+            <config>
+              <index>0</index>
+              <description>Frustrated Person's Network</description>
+              <enabled>true</enabled>
+            </config>
+            <ipv4 xmlns="http://openconfig.net/yang/interfaces/ip">
+              <addresses>
+                <address>
+                  <ip>10.10.30.48</ip>
+                  <config>
+                    <ip>10.10.30.48</ip>
+                    <prefix-length>24</prefix-length>
+                  </config>
+                </address>
+              </addresses>
+              <proxy-arp>
+                <config>
+                  <mode>DISABLE</mode>
+                </config>
+              </proxy-arp>
+            </ipv4>
+          </subinterface>
+        </subinterfaces>
+      </interface>
+    </interfaces>
+  </config>
+</edit-config>
+''',
+]
+
+if __name__ == '__main__':
+
+    parser = ArgumentParser(description='Usage:')
+
+    # script arguments
+    parser.add_argument('-a', '--host', type=str, required=True,
+                        help="Device IP address or Hostname")
+    parser.add_argument('-u', '--username', type=str, required=True,
+                        help="Device Username (netconf agent username)")
+    parser.add_argument('-p', '--password', type=str, required=True,
+                        help="Device Password (netconf agent password)")
+    parser.add_argument('--port', type=int, default=830,
+                        help="Netconf agent port")
+    args = parser.parse_args()
+
+    # connect to netconf agent
+    with manager.connect(host=args.host,
+                         port=args.port,
+                         username=args.username,
+                         password=args.password,
+                         timeout=90,
+                         hostkey_verify=False,
+                         device_params={'name': 'csr'}) as m:
+
+        # execute netconf operation
+        for rpc in payload:
+            try:
+                response = m.dispatch(et.fromstring(rpc))
+                data = response.xml
+            except RPCError as e:
+                data = e.xml
+                pass
+            except Exception as e:
+                traceback.print_exc()
+                exit(1)
+
+            # beautify output
+            if et.iselement(data):
+                data = et.tostring(data, pretty_print=True).decode()
+
+            try:
+                out = et.tostring(
+                    et.fromstring(data.encode('utf-8')),
+                    pretty_print=True
+                ).decode()
+            except Exception as e:
+                traceback.print_exc()
+                exit(1)
+
+            print(out)

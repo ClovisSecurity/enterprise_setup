@@ -58,6 +58,25 @@ with manager.connect(host=router["host"], port=router["port"], username=router["
             
             print(f"Name: {int_trouble_data.name}\nShutdown: {shutdown_bool}\nTrunk Status: {int_trouble_data.trunk_status}\nSpeed: \
                   {int_trouble_data.speed}\nMTU: {int_trouble_data.mtu}\nLast Change: {int_trouble_data.last_change}")
+            
+            int_type = interface['interface-type']
         
         exit()
+        
+    for rpc in payload2:
+      try:
+        response = conn.dispatch(et.fromstring(rpc))
+        # print(response)
+        data = response.xml
+          
+        query_response = xmltodict.parse(data)["rpc-reply"]["data"]["interfaces"]["interface"]
+        pprint(query_response)
+          
+      except RPCError as exception:
+        data = exception.xml
+        pass
+      except Exception as exception:
+          traceback.print_exc()
+          exit(1)
+          
     conn.close_session()
