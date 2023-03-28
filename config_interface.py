@@ -5,7 +5,7 @@ from ncclient.operations import RPCError
 from router_info import router
 
 int_name = "GigabitEthernet3"
-desc = "Person Smarter Than Cisco Employee's Interface"
+desc = "Person Smarter Than Cisco's Employees' Interface"
 enable_bool = "true"
 ip = "10.10.40.48"
 ip_prefix = "24"
